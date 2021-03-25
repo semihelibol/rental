@@ -1,0 +1,111 @@
+<div class="container d-flex justify-content-center align-items-center">
+  <div *ngIf="paymentSuccess">
+    <div class="text-center">
+      <i class="fas fa-check-circle text-success mb-5"></i>
+      <p class="display-6">Ödeme Başarıyla Gerçekleştirildi.</p>
+      <button
+        class="btn btn-fill btn-success"
+        routerLink="/cars/car-detail/{{ car.id }}"
+      >
+        Tamam
+      </button>
+    </div>
+  </div>
+  <div *ngIf="!paymentSuccess">
+    <h1 class="text-center">Kredi Kartı İle Ödeme</h1>
+    <form [formGroup]="paymentForm">
+      <div class="mb-3">
+        <label for="nameOnCard"
+          >Kartın üzerindeki isim ve soyisim</label
+        >
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            id="nameOnCard"
+            formControlName="nameOnCard"
+            placeholder="Semih Elibol"
+            [(ngModel)]="nameOnCard"
+          />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="cardNumber">Card number</label>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            id="cardNumber"
+            formControlName="cardNumber"
+            placeholder="0000-0000-0000-0000"
+            [(ngModel)]="cardNumber"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <label for="expirationDate">Son Kullanma Tarihi</label>
+          <div class="row" id="expirationDate">
+            <div class="col-md-5">
+              <div class="mb-3">
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="expirationDateMonth"
+                    placeholder="Ay"
+                    [(ngModel)]="expirationDateMonth"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <h3 class="text-center">/</h3>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <div class="form-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="expirationDateYear"
+                    placeholder="Yıl"
+                    [(ngModel)]="expirationDateYear"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="mb-3">
+            <div class="form-group">
+              <label for="securityCode">Güvenlik Kodu</label>
+              <input
+                id="securityCode"
+                type="text"
+                class="form-control"
+                formControlName="securityCode"
+                placeholder="000"
+                [(ngModel)]="securityCode"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-md-6" style="text-align: end">
+        <button (click)="paymentButton()" class="btn btn-primary">
+          Ödeme Yap
+        </button>
+      </div>
+      <div class="col-md-6" style="text-align: start">
+        <button class="btn btn-fill btn-warning" (click)="cancelButton()">
+          Vazgeç
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

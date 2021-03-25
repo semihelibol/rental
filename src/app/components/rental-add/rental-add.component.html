@@ -1,0 +1,129 @@
+<div style="text-align: center" aria-current="true" *ngIf="car">
+  <h3>ARAÇ KİRALAMA</h3>
+</div>
+<div class="row" *ngIf="car">
+  <div class="col-md-6">
+    <div class="card">
+      <img
+        src="{{ imagePath }}/{{ car.carImagePath }}"
+        class="card-img-top"
+        alt="{{ car.carName }}"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ car.carName }}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Kodu: {{ car.id }}</li>
+        <li class="list-group-item">Marka: {{ car.brandName }}</li>
+        <li class="list-group-item">Renk: {{ car.colorName }}</li>
+        <li class="list-group-item">Model Yılı: {{ car.modelYear }}</li>
+        <li class="list-group-item">
+          Günlük Kira Ücreti:
+          {{ car.dailyPrice | currency: "TRY":"TL ":"1.0-2" }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div *ngIf="rentalSuccess">
+    <div class="text-center">
+      <i class="fas fa-check-circle text-success mb-5"></i>
+      <p class="display-6">Kiralama Başarıyla Gerçekleştirildi.</p>
+      <button
+        class="btn btn-fill btn-success"
+        routerLink="/cars/car-detail/{{ car.id }}">
+        Tamam
+      </button>
+    </div>
+  </div>
+  <div *ngIf="!rentalSuccess" class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="title">Aracı Kirala</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="rentalAddForm">
+          <div class="mb-3">
+            <label for="customerId">Müşteri Seçin:</label>
+            <div class="form-group">
+              <select
+                type="select"
+                [(ngModel)]="customerId"
+                id="customerId"
+                formControlName="customerId"
+                class="form-control"
+              >
+                <option
+                  [value]="customer.id"
+                  *ngFor="let customer of customers"
+                >
+                  {{ customer.firstName }} {{ customer.lastName }} ({{
+                    customer.companyName
+                  }})
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="rentDate"> Kiralama Tarihi:</label>
+            <div class="form-group">
+              <input
+                class="form-control"
+                formControlName="rentDate"
+                id="rentDate"
+                min="{{ getMinDate() }}"
+                type="date"
+                (input)="dateControl()"
+                [(ngModel)]="rentDate"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="returnDate"> Teslim Tarihi:</label>
+            <div class="form-group">
+              <input
+                class="form-control"
+                formControlName="returnDate"
+                id="returnDate"
+                min="{{ getMinDate() }}"
+                type="date"
+                (input)="dateControl()"
+                [(ngModel)]="returnDate"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="dailyPrice"> Günlük Kira Ücreti:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="dailyPrice"
+                formControlName="dailyPrice"
+                class="form-control"
+                [ngModel]="car.dailyPrice | currency: 'TL '"
+                readonly
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-md-6" style="text-align: end">
+            <button class="btn btn-fill btn-primary" (click)="rentalAdd()">
+              Kirala
+            </button>
+          </div>
+          <div class="col-md-6" style="text-align: start">
+            <button
+              class="btn btn-fill btn-warning"
+              routerLink="/cars/car-detail/{{ car.id }}"
+            >
+              Vazgeç
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
