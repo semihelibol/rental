@@ -1,50 +1,41 @@
 <app-car-filter></app-car-filter>
-<div class="mb-3">
-  <label for="filterCarBrand" class="form-label">Marka Ara</label>
-  <input
-    type="text"
-    id="filterCarBrand"
-    [(ngModel)]="filterText"
-    class="form-control"
-    placeholder="Marka adı giriniz."
-  />
+<div *ngIf="cars.length<1">
+  <div class="container vh-100 d-flex align-items-center col justify-content-center">
+    <p class="display-3">Listelenebilecek hiç araç yok...</p>
+  </div>
 </div>
-<div *ngIf="filterText.length > 2" class="alert alert-success">
-  {{ filterText }} aradınız.
-</div>
-<div class="row">
-  <div
-    *ngFor="let car of cars | filterCar: filterText"
-    class="card"
-    style="width: 20rem"
-  >
-    <img
-      src="{{ imagePath }}/{{ car.carImagePath }}"
-      class="card-img-top"
-      alt="{{ car.carName }}"
-    />
-    <div class="card-body">
-      <h5 class="card-title">{{ car.carName }}</h5>
-    </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">Kodu: {{ car.id }}</li>
-      <li class="list-group-item">Marka: {{ car.brandName }}</li>
-      <li class="list-group-item">Renk: {{ car.colorName }}</li>
-      <li class="list-group-item">Model Yılı: {{ car.modelYear }}</li>
-      <li class="list-group-item">
-        Günlük Kira Ücreti: {{ car.dailyPrice }} TL
-      </li>
-    </ul>
-    <div class="card-body">
-      <div class="row">
-        <button
-          routerLink="/cars/car-detail/{{ car.id }}"
-          type="button"
-          class="btn btn-light"
-          style="align-self: flex-start"
-        >
-          Detaylar
-        </button>
+<div *ngIf="cars.length>0">
+  <div class="mb-3">
+    <label for="filterCar" class="form-label">Araba Ara</label>
+    <input type="text" id="filterCar" [(ngModel)]="filterText" class="form-control" placeholder="Araba adı giriniz." />
+  </div>
+  <div *ngIf="filterText.length > 2" class="alert alert-success">
+    {{ filterText }} aradınız.
+  </div>
+  <div class="row">
+    <div *ngFor="let car of cars | filterCar: filterText" class="card" style="width: 20rem">       
+      <img src="{{ imagePath }}/{{ car.carImagePath }}" class="card-img-top" alt="{{ car.carName }}" />
+      <div class="card-body">
+        <h5 class="card-title">{{ car.carName }}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Kodu: {{ car.id }}</li>
+        <li class="list-group-item">Marka: {{ car.brandName }}</li>
+        <li class="list-group-item">Renk: {{ car.colorName }}</li>
+        <li class="list-group-item">Model Yılı: {{ car.modelYear }}</li>
+        <li class="list-group-item">
+          Günlük Kira Ücreti: {{ car.dailyPrice }} TL
+        </li>
+      </ul>
+      <div class="card-footer">
+        <div class="row">
+          <button routerLink="/cars/car-detail/{{ car.id }}" type="button" class="btn btn-outline-info">
+            Detaylar
+          </button>          
+          <button class="btn btn-outline-primary" (click)="rentalAdd(car.id,car.carName)">
+            Kirala
+          </button>
+        </div>
       </div>
     </div>
   </div>

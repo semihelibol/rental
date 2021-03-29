@@ -26,7 +26,7 @@ export class PaymentCreditcardComponent implements OnInit {
     private router: Router,
     private paymentService: PaymentService,
     private carService: CarService,
-    private toastr: ToastrService,
+    private toastrService: ToastrService,
     private rentalService: RentalService
   ) {}
 
@@ -72,14 +72,10 @@ export class PaymentCreditcardComponent implements OnInit {
       (response) => {
         this.paymentService.payByCreditCard(creditCard).subscribe(
           (response) => {
-            this.toastr.success(
-              'Kiralama işlemi gerçekleştirildi.',
-              'Ödeme İşlemi Gerçekleştirildi.'
-            );
-            this.paymentSuccess = true;
+            this.add();
           },
           (error) => {
-            this.toastr.warning(
+            this.toastrService.warning(
               'İşlem gerçekleştirilemedi. Kart bilgilerinizi kontrol ediniz.',
               'Kredi Kartı Hatası'
             );
@@ -88,7 +84,7 @@ export class PaymentCreditcardComponent implements OnInit {
         );
       },
       (error) => {
-        this.toastr.warning(
+        this.toastrService.warning(
           'İşlem gerçekleştirilemedi. Kart bilgilerinizi kontrol ediniz.',
           'Kredi Kartı Hatası'
         );
@@ -120,7 +116,7 @@ export class PaymentCreditcardComponent implements OnInit {
   }
 
   cancelButton() {
-    this.toastr.warning(
+    this.toastrService.warning(
       'Kiralama sayfasına geri dönülüyor...',
       'Ödeme İşlemi İptal Edildi.'
     );
@@ -140,8 +136,31 @@ export class PaymentCreditcardComponent implements OnInit {
       !this.expirationDateYear ||
       !this.expirationDateMonth
     ) {
-      this.toastr.warning('Son kullanma tarihini kontrol ediniz.', 'Dikkat');
+      this.toastrService.warning('Son kullanma tarihini kontrol ediniz.', 'Dikkat');
       return false;
     } else return true;
   }
+
+
+  add() {
+    this.rentalService.add(this.rentalService.tempRental).subscribe(response => {      
+      this.toastrService.success(
+        'Kiralama işlemi gerçekleştirildi.',
+        'Ödeme İşlemi Gerçekleştirildi.'
+      );
+      this.paymentSuccess = true;
+    }, responseError => {
+      if (responseError.error.Errors.length > 0) {
+        for (let i = 0; i < responseError.error.Errors.length; i++) {
+          this.toastrService.error(responseError.error.Errors[i].ErrorMessage
+            , "Doğrulama hatası")
+        }
+      }
+      else {
+        this.toastrService.error(responseError.ErrorMessage
+          , "Hata Oluştu")
+      }
+    });
+  }
+
 }

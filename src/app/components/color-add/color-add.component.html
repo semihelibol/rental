@@ -1,0 +1,36 @@
+<div class="card">
+    <div class="card-header">
+      <h5 class="title">Renk Bilgileri</h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3" *ngIf="color">
+        <label for="id"> Kodu:</label>
+        <div class="form-group">
+          <input class="form-control" [(ngModel)]="color.id" id="id" type="text" readonly />
+        </div>
+      </div>
+      <form [formGroup]="colorAddForm">
+        <div class="mb-3">
+          <label for="name"> Renk Adı:</label>
+          <div class="form-group">
+            <input class="form-control" formControlName="name" id="name" type="text" />
+          </div>
+        </div>
+      </form>
+    </div>
+  
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-6" style="text-align: end">
+          <button class="btn btn-fill btn-primary" (click)="colorAdd()">
+            Kaydet
+          </button>
+        </div>
+        <div class="col-md-6" style="text-align: start">
+          <button class="btn btn-fill btn-warning" routerLink="/cars">
+            Vazgeç
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

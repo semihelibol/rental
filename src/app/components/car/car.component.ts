@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { CarDto } from 'src/app/models/carDto';
 import { BrandService } from 'src/app/services/brand.service';
 import { CarService } from 'src/app/services/car.service';
 import { ColorService } from 'src/app/services/color.service';
+import { RentalService } from 'src/app/services/rental.service';
 
 @Component({
   selector: 'app-car',
@@ -15,12 +17,16 @@ export class CarComponent implements OnInit {
   dataLoaded = false;
   imagePath: string = 'https://localhost:44356/images/';
   filterText = '';
+  rentable: boolean = false;
 
   constructor(
     private carService: CarService,
+    private rentalService: RentalService,
     private brandService: BrandService,
     private colorService: ColorService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private toastrService: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +40,11 @@ export class CarComponent implements OnInit {
       } else {
         this.getCarDetails();
       }
+    });
+  }
+  carRentable(carId: number) {
+    this.rentalService.carRentable(carId).subscribe((response) => {
+      this.rentable = response.success;
     });
   }
   getCarDetails() {
@@ -70,5 +81,24 @@ export class CarComponent implements OnInit {
       this.getCarDetails()
     }
 
+  }
+
+  rentalAdd(carId:number,carName:string) {
+    this.rentalService.carRentable(carId).subscribe((response) => {
+      this.router.navigate([
+      '/rentals/rental-add/' + carId 
+    ]);
+    this.toastrService.info(
+      'Kiralama sayfasına yönlendiriliyorsunuz...',
+      carName + ' Aracı kiralanıyor.'
+    );
+    },
+    (error)=>{
+      this.toastrService.warning(
+        carName +' aracı henüz teslim edilmemiş...',
+        'Araç zaten kirada.'
+      );
+    });
+    
   }
 }

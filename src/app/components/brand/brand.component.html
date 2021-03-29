@@ -1,26 +1,23 @@
 <div class="shadow-none p-3 mb-5 bg-light rounded">
   <div class="mb-3">
     <label for="filterBrand" class="form-label">Marka Ara</label>
-    <input
-      type="text"
-      id="filterBrand"
-      [(ngModel)]="filterText"
-      class="form-control"
-      placeholder="Marka adı giriniz."
-    />
+    <input type="text" id="filterBrand" [(ngModel)]="filterText" class="form-control"
+      placeholder="Marka adı giriniz." />
   </div>
   <div *ngIf="filterText.length > 2" class="alert alert-success">
     {{ filterText }} aradınız.
   </div>
   <ul class="list-group">
     <li [class]="getAllBrandClass()" (click)="setAllBrand()">Tüm Markalar</li>
-    <li
-      [class]="getCurrentBrandClass(brand)"
-      *ngFor="let brand of brands | filterBrand: filterText"
-      (click)="setCurrentBrand(brand)"
-    >
+    <li [class]="getCurrentBrandClass(brand)" *ngFor="let brand of brands | filterBrand: filterText"
+      (click)="setCurrentBrand(brand)">
       {{ brand.name }}
     </li>
   </ul>
-  <h5 *ngIf="currentBrand">{{ currentBrand.name }} seçtiniz</h5>
+  <div style="text-align: center" aria-current="true" *ngIf="!allBrand">
+    <h5>{{ currentBrand.name }} seçtiniz</h5>
+    <button class="btn btn-outline-success" style="align-self: center" routerLink="/brands/update/{{ currentBrand.id }}">
+      Seçili Markayı Güncelle
+    </button>
+  </div>
 </div>

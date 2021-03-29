@@ -68,4 +68,9 @@ export class CarDetailComponent implements OnInit {
       this.car.carName + ' Aracı kiralanıyor.'
     );
   }
+
+  carUpdate(){
+
+    
+  };
 }

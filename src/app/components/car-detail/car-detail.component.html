@@ -19,60 +19,42 @@
         <td>{{ car.brandName }}</td>
         <td>{{ car.colorName }}</td>
         <td>{{ car.modelYear }}</td>
-        <td>{{ car.dailyPrice }}</td>
+        <td>{{ car.dailyPrice | currency: "TRY":"TL ":"1.0-2" }}</td>
         <td>
-          <div class="col-md-6">
-            <button
-              class="btn btn-fill btn-success"
-              *ngIf="rentable"
-              routerLink="/rentals/rental-add/{{ car.id }}"
-              (click)="rentalAdd()"
-            >
-              Kirala
-            </button>
-          </div>
-          <div class="col-md-6">
-            <b *ngIf="!rentable">Kiralanmış</b>
-          </div>
+          <button class="btn btn-fill btn-success" *ngIf="rentable" routerLink="/rentals/rental-add/{{ car.id }}"
+            (click)="rentalAdd()">
+            Kirala
+          </button>
+          <b *ngIf="!rentable">Kiralanmış</b>
         </td>
       </tr>
     </tbody>
   </table>
+  <div class="container">
+    <div class="row">
+    
+      <button class="btn btn-fill btn-success" routerLink="/cars/update/{{ car.id }}" (click)="carUpdate()">
+        Düzenle
+      </button>
+    </div>
+  </div>
 </div>
 <div class="container">
   <div class="card-body">
-    <div
-      id="carouselExampleIndicators"
-      class="carousel slide"
-      data-bs-ride="carousel"
-    >
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
-        <div
-          *ngFor="let carImage of carImages; let i = index"
-          [ngClass]="getSliderClassName(i)"
-        >
-          <img
-            src="{{ imagePath }}/{{ carImage.imagePath }}"
-            class="d-block w-100"
-            alt="{{ imagePath }}{{ carImage.imagePath }}"
-          />
+        <div *ngFor="let carImage of carImages; let i = index" [ngClass]="getSliderClassName(i)">
+          <img src="{{ imagePath }}/{{ carImage.imagePath }}" class="d-block w-100"
+            alt="{{ imagePath }}{{ carImage.imagePath }}" />
         </div>
 
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-bs-target="#carouselExampleIndicators"
-          data-bs-slide="prev"
-        >
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span>Geri</span>
         </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-bs-target="#carouselExampleIndicators"
-          data-bs-slide="next"
-        >
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+          data-bs-slide="next">
           <span>İleri</span>
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
         </button>

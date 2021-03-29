@@ -13,5 +13,11 @@
   *ngFor="let color of colors | filterColor:filterText" (click)="setCurrentColor(color)">
   {{color.name}} </li>
 </ul>
-<h5 *ngIf="currentColor">{{currentColor.name}} seçtiniz</h5>
+<div style="text-align: center" aria-current="true" *ngIf="!allColor">
+  <h5 >{{currentColor.name}} seçtiniz</h5>
+  <button class="btn btn-outline-success" style="align-self: center" routerLink="/colors/update/{{ currentColor.id }}">
+    Seçili Rengi Güncelle
+  </button>
+</div>
+
 </div>

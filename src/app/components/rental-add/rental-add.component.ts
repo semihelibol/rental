@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
 import { CarDto } from 'src/app/models/carDto';
 import { CustomerDto } from 'src/app/models/customerDto';
 import { Rental } from 'src/app/models/rental';
@@ -21,7 +22,7 @@ import { RentalService } from 'src/app/services/rental.service';
   styleUrls: ['./rental-add.component.css'],
 })
 export class RentalAddComponent implements OnInit {
-  userId: number = 2002; //giriş yapmadığımız için el ile bir userId verdim.
+  userId: number =2002; //giriş yapmadığımız için el ile bir userId verdim.
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,7 +31,7 @@ export class RentalAddComponent implements OnInit {
     private customerService: CustomerService,
     private rentalService: RentalService,
     private carService: CarService,
-    private toastr: ToastrService
+    private toastrService: ToastrService
   ) {}
 
   rentalSuccess = false;
@@ -61,6 +62,7 @@ export class RentalAddComponent implements OnInit {
 
   createRentalAddForm() {
     this.rentalAddForm = this.formBuilder.group({
+      carId:['', Validators.required],
       customerId: ['', Validators.required],
       rentDate: ['', Validators.required],
       returnDate: ['', Validators.required],
@@ -87,32 +89,48 @@ export class RentalAddComponent implements OnInit {
       (response) => {
         this.rentable = true;
         if (!this.returnDate) {
-          this.toastr.success('Kiralama İşlemi Tamamlandı.', 'Başarılı');
-          this.rentalSuccess = true;
+          this.add();
         } else {
-          this.toastr.info(
+          this.toastrService.info(
             'Ödeme sayfasına yönlendiriliyorsunuz...',
             'Ödeme İşlemleri'
           );
           this.router.navigate(['/payment/creditcard/']);
         }
-      },
-      (error) => {
-        this.rentable = false;
-        this.toastr.warning(
-          'Araç, seçilen tarihte zaten kirada olduğu için kiralanamaz.',
+      },responseError=>{         
+        this.toastrService.error(responseError.error.message+
+          ' Araç, seçilen tarihte zaten kirada olduğu için kiralanamaz.',
           'Dikkat'
         );
       }
     );
   }
   
+  add() {
+    let rentalModel = Object.assign({}, this.rentalAddForm.value);
+    rentalModel.carId=this.car.id;
+    this.rentalService.add(rentalModel).subscribe(response => {
+      this.toastrService.success('Kiralama İşlemi Tamamlandı.', 'Başarılı');
+      this.rentalSuccess = true;
+    }, responseError => {
+      if (responseError.error.Errors.length > 0) {
+        for (let i = 0; i < responseError.error.Errors.length; i++) {
+          this.toastrService.error(responseError.error.Errors[i].ErrorMessage
+            , "Doğrulama hatası")
+        }
+      }
+      else {
+        this.toastrService.error(responseError.ErrorMessage
+          , "Hata Oluştu")
+      }
+    });
+  }
 
   dateControl() {
     if (!this.returnDate || this.returnDate >= this.rentDate) {
       return true;
     } else {
-      this.toastr.warning(
+      this.toastrService.warning(
         'Teslim tarihi Kiralama tarihinden küçük olamaz.',
         'Dikkat'
       );
@@ -124,7 +142,7 @@ export class RentalAddComponent implements OnInit {
     if (this.customerId != null) {
       return true;
     } else {
-      this.toastr.warning('Müşteri Seçiniz.', 'Dikkat');
+      this.toastrService.warning('Müşteri Seçiniz.', 'Dikkat');
       return false;
     }
   }
@@ -134,13 +152,13 @@ export class RentalAddComponent implements OnInit {
       rentDate: this.rentDate,
       returnDate: this.returnDate,
       carId: this.car.id,
-      customerId: this.customerId,
+      customerId: this.customerId, 
     };
 
-    if (this.customerControl()) {
+    if (this.customerControl()&&this.rentalAddForm) {
       this.carRentableByRentDate(this.car.id, this.rentDate);
     } else {
-      this.toastr.warning('Formu kontrol ediniz.', 'Dikkat');
+      this.toastrService.warning('Formu kontrol ediniz.', 'Dikkat');
     }    
   }
 }
