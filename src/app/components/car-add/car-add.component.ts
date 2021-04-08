@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core'; import {
+import { Component, OnInit } from '@angular/core';
+import {
   FormGroup,
   FormBuilder,
   FormControl,
@@ -16,14 +17,13 @@ import { ColorService } from 'src/app/services/color.service';
 @Component({
   selector: 'app-car-add',
   templateUrl: './car-add.component.html',
-  styleUrls: ['./car-add.component.css']
+  styleUrls: ['./car-add.component.css'],
 })
 export class CarAddComponent implements OnInit {
-
   carAddForm: FormGroup;
   car: Car;
-  brands:Brand[];  
-  colors:Color[];
+  brands: Brand[];
+  colors: Color[];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,7 +33,7 @@ export class CarAddComponent implements OnInit {
     private brandService: BrandService,
     private colorService: ColorService,
     private toastrService: ToastrService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.createCarAddForm();
@@ -50,9 +50,10 @@ export class CarAddComponent implements OnInit {
     this.carAddForm = this.formBuilder.group({
       brandId: ['', Validators.required],
       colorId: ['', Validators.required],
-      description:['', Validators.required],
-      modelYear:['', Validators.required],
-      dailyPrice:['', Validators.required]      
+      description: ['', Validators.required],
+      modelYear: ['', Validators.required],
+      minFindeksScore: ['', Validators.required],
+      dailyPrice: ['', Validators.required],
     });
   }
 
@@ -62,69 +63,92 @@ export class CarAddComponent implements OnInit {
       this.carAddForm.patchValue(this.car);
     });
   }
-  
-  getBrands(){
+
+  getBrands() {
     this.brandService.getBrands().subscribe((response) => {
-      this.brands = response.data;      
+      this.brands = response.data;
     });
   }
 
-  getColors(){
+  getColors() {
     this.colorService.getColors().subscribe((response) => {
-      this.colors = response.data;      
+      this.colors = response.data;
     });
   }
 
   add() {
-    let carModel = Object.assign({}, this.carAddForm.value);
-    this.carService.add(carModel).subscribe(response => {
-      this.router.navigate(['/cars']);
-      this.toastrService.success("Araba Adı:"+carModel.description+"\n Model Yılı:"+carModel.modelYear);
-      this.toastrService.success(response.message, "Başarılı");
-    }, responseError => {
-      if (responseError.error.Errors.length > 0) {
-        for (let i = 0; i < responseError.error.Errors.length; i++) {
-          this.toastrService.error(responseError.error.Errors[i].ErrorMessage
-            , "Doğrulama hatası")
+    let carModel = Object.assign({}, this.carAddForm.value);    
+    this.carService.add(carModel).subscribe(
+      (response) => {
+        this.router.navigate(['/cars']);
+        this.toastrService.success(
+          'Araba Adı:' +
+            carModel.description +
+            '\n Model Yılı:' +
+            carModel.modelYear
+        );
+        this.toastrService.success(response.message, 'Başarılı');
+      },
+      (responseError) => {
+        if (
+          responseError.error.Errors &&
+          responseError.error.Errors.length > 0
+        ) {
+          for (let i = 0; i < responseError.error.Errors.length; i++) {
+            this.toastrService.error(
+              responseError.error.Errors[i].ErrorMessage,
+              'Doğrulama Hatası!'
+            );
+          }
+        } else {        
+          this.toastrService.error(responseError.error.Message, 'Hata Oluştu!');
         }
       }
-      else {
-        this.toastrService.error(responseError.ErrorMessage
-          , "Hata Oluştu")
-      }
-    });
+    );
   }
 
-  update() {    
-    let carModel =Object.assign({}, this.carAddForm.value);
-    carModel.id=this.car.id;  
-    this.carService.update(carModel).subscribe(response => {
-      this.router.navigate(['/cars/car-detail/' + this.car.id]);
-      this.toastrService.success("Araba Adı:"+carModel.description+"\n Model Yılı:"+carModel.modelYear);
-      this.toastrService.success(response.message, "Başarılı");
-    }, responseError => {
-      if (responseError.error.Errors.length > 0) {
-        for (let i = 0; i < responseError.error.Errors.length; i++) {
-          this.toastrService.error(responseError.error.Errors[i].ErrorMessage
-            , "Doğrulama hatası")
+  update() {
+    let carModel = Object.assign({}, this.carAddForm.value);
+    carModel.id = this.car.id;
+    this.carService.update(carModel).subscribe(
+      (response) => {
+        this.router.navigate(['/cars/car-detail/' + this.car.id]);
+        this.toastrService.success(
+          'Araba Adı:' +
+            carModel.description +
+            '\n Model Yılı:' +
+            carModel.modelYear
+        );
+        this.toastrService.success(response.message, 'Başarılı');
+      },
+      (responseError) => {
+        if (
+          responseError.error.Errors &&
+          responseError.error.Errors.length > 0
+        ) {
+          for (let i = 0; i < responseError.error.Errors.length; i++) {
+            this.toastrService.error(
+              responseError.error.Errors[i].ErrorMessage,
+              'Doğrulama hatası'
+            );
+          }
+        } else {          
+          this.toastrService.error(responseError.error.Message, 'Hata Oluştu!');
         }
       }
-      else {
-        this.toastrService.error(responseError.ErrorMessage
-          , "Hata Oluştu.")
-      }
-    });
+    );
   }
 
   carAdd() {
-    if (this.carAddForm.valid) {     
+    
+    if (this.carAddForm.valid) {
       if (this.car) {
-        this.update()
-      } else {        
-        this.add()
+        this.update();
+      } else {
+        this.add();
       }
     } else {
-      this.toastrService.error("Formunuz eksik", "Dikkat")
+      this.toastrService.error('Formunuz eksik', 'Dikkat');
     }
   }
 }

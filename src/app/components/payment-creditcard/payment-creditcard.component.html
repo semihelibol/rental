@@ -1,12 +1,22 @@
 <div class="container d-flex justify-content-center align-items-center">
   <div *ngIf="paymentSuccess">
     <div class="text-center">
+      
+      <div *ngIf="creditCardId===0" class="mt-5 mb-5">
+        <div class="mb-3">
+          <label for="creditCardName">Kartınıza bir isim verin:</label>
+            <input class="form-control" type="text" id="creditCardName" 
+              placeholder="Kredi Kartım" [(ngModel)]="creditCardName" />       
+        </div>
+        <button  class="btn btn-fill btn-success" (click)="saveCardClick()">
+          Kredi Kartımı Kaydet
+        </button>
+      </div>
+
       <i class="fas fa-check-circle text-success mb-5"></i>
       <p class="display-6">Ödeme Başarıyla Gerçekleştirildi.</p>
-      <button
-        class="btn btn-fill btn-success"
-        routerLink="/cars/car-detail/{{ car.id }}"
-      >
+
+      <button class="btn btn-fill btn-success" routerLink="/cars/car-detail/{{ car.id }}">
         Tamam
       </button>
     </div>
@@ -14,31 +24,38 @@
   <div *ngIf="!paymentSuccess">
     <h1 class="text-center">Kredi Kartı İle Ödeme</h1>
     <h3 class="text-center">Ödenecek Tutar: {{ paymentAmount }} TL</h3>
+    <div *ngIf="creditCardId>0">
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-md-6" style="text-align: start"><label for="creditCardId">Kayıtlı Kredi Kartlarım</label>
+          </div>
+          <div class="col-md-6" style="text-align: end"> <a class="dropdown-item" (click)="newCard()">Başka Kart ile
+              Öde</a></div>
+        </div>
+        <div class="form-group">
+          <select type="select" [(ngModel)]="creditCardId" id="creditCardId" class="form-control"
+            (change)="creditCardChange()">
+            <option [ngValue]="creditCard.id" *ngFor="let creditCard of creditCards">
+              {{ creditCard.creditCardName }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <form [formGroup]="paymentForm">
       <div class="mb-3">
         <label for="nameOnCard">Kartın üzerindeki isim ve soyisim</label>
         <div class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            id="nameOnCard"
-            formControlName="nameOnCard"
-            placeholder="Semih Elibol"
-            [(ngModel)]="nameOnCard"
-          />
+          <input type="text" class="form-control" id="nameOnCard" formControlName="nameOnCard"
+            placeholder="Semih Elibol" [(ngModel)]="nameOnCard" />
         </div>
       </div>
       <div class="mb-3">
         <label for="cardNumber">Card number</label>
         <div class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            id="cardNumber"
-            formControlName="cardNumber"
-            placeholder="0000-0000-0000-0000"
-            [(ngModel)]="cardNumber"
-          />
+          <input type="text" class="form-control" id="cardNumber" formControlName="cardNumber"
+            placeholder="0000-0000-0000-0000" [(ngModel)]="cardNumber" />
         </div>
       </div>
       <div class="row">
@@ -48,16 +65,8 @@
             <div class="col-md-5">
               <div class="mb-3">
                 <div class="form-group">
-                  <input
-                    type="number"
-                    class="form-control"
-                    formControlName="expirationDateMonth"
-                    placeholder="Ay"
-                    max="12"
-                    min="1"
-                    [(ngModel)]="expirationDateMonth"
-                    (input)="dateControl()"
-                  />
+                  <input type="number" class="form-control" formControlName="expirationDateMonth" placeholder="Ay"
+                    max="12" min="1" [(ngModel)]="expirationDateMonth" (input)="dateControl()" />
                 </div>
               </div>
             </div>
@@ -67,16 +76,8 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <div class="form-group">
-                  <input
-                    type="number"
-                    class="form-control"
-                    formControlName="expirationDateYear"
-                    placeholder="Yıl"
-                    max="2100"
-                    min="{{ getMinYear() }}"
-                    [(ngModel)]="expirationDateYear"
-                    (input)="dateControl()"
-                  />
+                  <input type="number" class="form-control" formControlName="expirationDateYear" placeholder="Yıl"
+                    max="2100" min="{{ getMinYear() }}" [(ngModel)]="expirationDateYear" (input)="dateControl()" />
                 </div>
               </div>
             </div>
@@ -87,16 +88,8 @@
           <div class="mb-3">
             <div class="form-group">
               <label for="securityCode">Güvenlik Kodu</label>
-              <input
-                id="securityCode"
-                type="text"
-                maxlength="3"
-                minlength="3"
-                class="form-control"
-                formControlName="securityCode"
-                placeholder="000"
-                [(ngModel)]="securityCode"
-              />
+              <input id="securityCode" type="text" maxlength="3" minlength="3" class="form-control"
+                formControlName="securityCode" placeholder="000" [(ngModel)]="securityCode" />
             </div>
           </div>
         </div>

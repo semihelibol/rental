@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CarDto } from 'src/app/models/carDto';
 import { CarImage } from 'src/app/models/carImage';
 import { CarImageService } from 'src/app/services/car-image.service';
 import { CarService } from 'src/app/services/car.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { RentalService } from 'src/app/services/rental.service';
 
 @Component({
@@ -24,6 +25,8 @@ export class CarDetailComponent implements OnInit {
     private carService: CarService,
     private rentalService: RentalService,
     private activatedRoute: ActivatedRoute,
+    private localStorageService: LocalStorageService,
+    private router: Router,
     private toastrService: ToastrService
   ) {}
 
@@ -69,8 +72,10 @@ export class CarDetailComponent implements OnInit {
     );
   }
 
-  carUpdate(){
-
-    
-  };
+  carUpdate() {
+    this.toastrService.info(
+      'Araç bilgilerini düzenleme sayfasına yönlendiriliyorsunuz...',
+      this.car.carName + ' Araç bilgileri düzenlenecek.'
+    );
+  }
 }

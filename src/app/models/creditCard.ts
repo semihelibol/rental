@@ -1,8 +1,9 @@
-export class  CreditCard{    
+export class  CreditCard{   
+    id?:number; 
     nameOnCard :string;
     cardNumber:string;
     expirationDateMonth:number;
     expirationDateYear:number;
     securityCode:string;
-    paymentAmount:number;
+    creditCardName?:string;
 }

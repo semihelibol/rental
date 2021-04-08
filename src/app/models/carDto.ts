@@ -6,6 +6,7 @@ export interface CarDto{
     brandName:string;
     colorName:string;
     modelYear:number;
+    minFindeksScore:number;
     dailyPrice:number;
     carImagePath:string;
 }

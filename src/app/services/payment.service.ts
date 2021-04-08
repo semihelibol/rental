@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ResponseModel } from '../models/responseModel';
 import { HttpClient } from '@angular/common/http';
 import { CreditCard } from '../models/creditCard';
+import { PayByCreditCardDto } from '../models/payByCreditCardDto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,11 @@ export class PaymentService {
   
 
   creditCardControl(creditCard:CreditCard): Observable<ResponseModel> {
-    let newPath = this.apiUrl + "payments/creditcardcontrol";
+    let newPath = this.apiUrl + "payments/checkifcreditcard";
     return this.httpClient.post<ResponseModel>(newPath,creditCard);
   }
-  payByCreditCard(creditCard:CreditCard): Observable<ResponseModel> {
+  payByCreditCard(payByCreditCardDto:PayByCreditCardDto): Observable<ResponseModel> {
     let newPath = this.apiUrl + "payments/paybycreditcard";
-    return this.httpClient.post<ResponseModel>(newPath,creditCard);
+    return this.httpClient.post<ResponseModel>(newPath,payByCreditCardDto);
   }
 }

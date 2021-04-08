@@ -5,6 +5,7 @@ import { CarDto } from 'src/app/models/carDto';
 import { BrandService } from 'src/app/services/brand.service';
 import { CarService } from 'src/app/services/car.service';
 import { ColorService } from 'src/app/services/color.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { RentalService } from 'src/app/services/rental.service';
 
 @Component({
@@ -26,6 +27,7 @@ export class CarComponent implements OnInit {
     private colorService: ColorService,
     private activatedRoute: ActivatedRoute,
     private toastrService: ToastrService,
+    private localStorageService: LocalStorageService,
     private router: Router
   ) {}
 
@@ -73,32 +75,30 @@ export class CarComponent implements OnInit {
           this.cars = response.data;
           this.dataLoaded = true;
         });
-    }else if (brandId>0){
-      this.getCarDetailsByBrand(brandId)
-    }else if (colorId>0){
-      this.getCarDetailsByColor(colorId)
-    }else{
-      this.getCarDetails()
+    } else if (brandId > 0) {
+      this.getCarDetailsByBrand(brandId);
+    } else if (colorId > 0) {
+      this.getCarDetailsByColor(colorId);
+    } else {
+      this.getCarDetails();
     }
-
   }
 
-  rentalAdd(carId:number,carName:string) {
-    this.rentalService.carRentable(carId).subscribe((response) => {
-      this.router.navigate([
-      '/rentals/rental-add/' + carId 
-    ]);
-    this.toastrService.info(
-      'Kiralama sayfasına yönlendiriliyorsunuz...',
-      carName + ' Aracı kiralanıyor.'
+  rentalAdd(carId: number, carName: string) {
+    this.rentalService.carRentable(carId).subscribe(
+      (response) => {
+        this.router.navigate(['/rentals/rental-add/' + carId]);
+        this.toastrService.info(
+          'Kiralama sayfasına yönlendiriliyorsunuz...',
+          carName + ' Aracı kiralanıyor.'
+        );
+      },
+      (error) => {
+        this.toastrService.warning(
+          carName + ' aracı henüz teslim edilmemiş...',
+          'Araç zaten kirada.'
+        );
+      }
     );
-    },
-    (error)=>{
-      this.toastrService.warning(
-        carName +' aracı henüz teslim edilmemiş...',
-        'Araç zaten kirada.'
-      );
-    });
-    
   }
 }

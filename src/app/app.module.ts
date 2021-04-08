@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {FormsModule,ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations"
 
@@ -29,6 +29,11 @@ import { CarMenuComponent } from './components/navi/car-menu/car-menu.component'
 import { CustomerMenuComponent } from './components/navi/customer-menu/customer-menu.component';
 import { UserMenuComponent } from './components/navi/user-menu/user-menu.component';
 import { CarAddComponent } from './components/car-add/car-add.component';
+import { LoginComponent } from './components/login/login.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { RegisterComponent } from './components/register/register.component';
+import { UserUpdateComponent } from './components/user-update/user-update.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +57,11 @@ import { CarAddComponent } from './components/car-add/car-add.component';
     CarMenuComponent,
     CustomerMenuComponent,
     UserMenuComponent,
-    CarAddComponent
+    CarAddComponent,
+    LoginComponent,
+    RegisterComponent,
+    UserUpdateComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +74,9 @@ import { CarAddComponent } from './components/car-add/car-add.component';
       positionClass:"toast-bottom-right"
     })
   ],
-  providers: [],
+  providers: [
+    {provide:HTTP_INTERCEPTORS, useClass:AuthInterceptor, multi:true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

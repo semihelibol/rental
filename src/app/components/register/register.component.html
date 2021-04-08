@@ -1,0 +1,58 @@
+<body class="text-center">
+    <main class="form-signin">
+      <form [formGroup]="registerForm">
+        <img
+          class="mb-4"
+          src="/assets/logo.png"
+          alt=""
+          width="72"
+          height="57"
+        />
+        <h1 class="h3 mb-3 fw-normal">Kayıt Ol</h1>
+        <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firstName"
+              id="floatingInputFirstNmae"
+              placeholder="semih"
+            />
+            <label for="floatingInput">İsim</label>
+          </div>
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastName"
+              id="floatingInputLastName"
+              placeholder="elibol"
+            />
+            <label for="floatingInput">Soyisim</label>
+          </div>
+        <div class="form-floating">
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            id="floatingInputEmail"
+            placeholder="semih@elibol.com"
+          />
+          <label for="floatingInput">Email Adresi</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            formControlName="password"
+            id="floatingPassword"
+            placeholder="Şifre"
+          />
+          <label for="floatingPassword">Şifre</label>
+        </div>           
+        <button class="w-100 btn btn-lg btn-primary" (click)="registerClick()">
+          Kayıt Ol
+        </button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+      </form>
+    </main>
+  </body>

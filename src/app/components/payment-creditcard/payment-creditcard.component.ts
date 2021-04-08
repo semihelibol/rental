@@ -13,6 +13,9 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
+import { PayByCreditCardDto } from 'src/app/models/payByCreditCardDto';
+import { CreditCardService } from 'src/app/services/credit-card.service';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-payment-creditcard',
@@ -27,13 +30,18 @@ export class PaymentCreditcardComponent implements OnInit {
     private paymentService: PaymentService,
     private carService: CarService,
     private toastrService: ToastrService,
-    private rentalService: RentalService
-  ) {}
+    private rentalService: RentalService,
+    private creditCardService: CreditCardService
+  ) { }
 
   paymentSuccess = false;
-  rental: Rental = this.rentalService.tempRental;
+  rental = this.rentalService.tempRental;
   paymentForm: FormGroup;
   car: CarDto;
+  payByCreditCardDto: PayByCreditCardDto;
+  creditCards:CreditCard[];
+  creditCardId:number=0;
+  creditCardName:string;
   nameOnCard: string;
   cardNumber: string;
   expirationDateMonth: number;
@@ -41,12 +49,27 @@ export class PaymentCreditcardComponent implements OnInit {
   securityCode: string;
   paymentAmount: number;
   rentDay: number;
-  creditCard: CreditCard;
+
 
   ngOnInit(): void {
+    if (!this.rental) {
+      window.history.back();
+    }
     this.createPaymentForm();
     this.getCarDetailsById(this.rental.carId);
+    this.getCreditCardsByCustomerId(this.rental.customerId);
   }
+
+  getCreditCardById(id: number) {
+    this.creditCardService.getCreditCardById(id).subscribe((response) => {
+      this.nameOnCard=response.data.nameOnCard;
+      this.cardNumber=response.data.cardNumber;
+      this.expirationDateMonth=response.data.expirationDateMonth;
+      this.expirationDateYear=response.data.expirationDateYear;
+      this.securityCode=response.data.securityCode;
+    });
+  }
+
   getCarDetailsById(carId: number) {
     this.carService.getCarDetailsById(carId).subscribe((response) => {
       this.car = response.data;
@@ -54,8 +77,13 @@ export class PaymentCreditcardComponent implements OnInit {
     });
   }
 
+  getMinYear(){
+    let year= Number(new Date().getFullYear().toString().slice(2,4));
+    return year;
+  }
+
   createPaymentForm() {
-    this.expirationDateYear = new Date().getFullYear();
+    this.expirationDateYear = this.getMinYear();
     this.expirationDateMonth = new Date().getMonth() + 1;
 
     this.paymentForm = this.formBuilder.group({
@@ -63,31 +91,81 @@ export class PaymentCreditcardComponent implements OnInit {
       cardNumber: ['', Validators.required],
       expirationDateMonth: ['', Validators.required],
       expirationDateYear: ['', Validators.required],
-      securityCode: ['', Validators.required],
+      securityCode: ['', Validators.required]
     });
   }
 
-  payByCreditCard(creditCard: CreditCard) {
-    this.paymentService.creditCardControl(creditCard).subscribe(
+  getCreditCardsByCustomerId(customerId: number) { 
+    this.creditCardService
+      .getCreditCardsByCustomerId(customerId)
+      .subscribe((response) => {
+        this.creditCards = response.data;
+        this.creditCardId = this.creditCards[0].id?this.creditCards[0].id:0;
+        this.getCreditCardById(this.creditCardId);
+      });
+  }
+
+  newCard(){
+    this.nameOnCard="";
+    this.cardNumber="";
+    this.expirationDateYear = this.getMinYear();
+    this.expirationDateMonth = new Date().getMonth() + 1;
+    this.securityCode="";
+    this.creditCardId=0;
+  }
+
+  creditCardChange(){
+    this.getCreditCardById(this.creditCardId);
+    
+  }
+
+  saveCardClick(){
+    let creditCardModel={
+      nameOnCard:this.nameOnCard,
+      cardNumber:this.cardNumber,
+      expirationDateMonth:this.expirationDateMonth,
+      expirationDateYear:this.expirationDateYear,
+      securityCode:this.securityCode,
+      creditCardName:this.creditCardName ,
+      customerId:this.rental.customerId     
+    }
+    this.creditCardService.add(creditCardModel).subscribe(
       (response) => {
-        this.paymentService.payByCreditCard(creditCard).subscribe(
-          (response) => {
-            this.add();
-          },
-          (error) => {
-            this.toastrService.warning(
-              'İşlem gerçekleştirilemedi. Kart bilgilerinizi kontrol ediniz.',
-              'Kredi Kartı Hatası'
-            );
-            this.paymentSuccess = false;
-          }
+        this.toastrService.success(
+          'Kredi Kartı Kaydedildi.',
+          'Başarılı.'
         );
+        this.router.navigate(["/cars/car-detail/"+this.car.id]);
+      }, responseError => {
+        if (
+          responseError.error.Errors &&
+          responseError.error.Errors.length > 0
+        ) {
+          for (let i = 0; i < responseError.error.Errors.length; i++) {
+            this.toastrService.error(
+              responseError.error.Errors[i].ErrorMessage,
+              'Doğrulama Hatası!'
+            );
+          }
+        } else {
+          this.toastrService.error(responseError.error, 'Hata Oluştu!');
+        }      
+      }
+    );
+  }
+
+  payByCreditCard(payByCreditCardDto: PayByCreditCardDto) {
+    this.paymentService.payByCreditCard(payByCreditCardDto).subscribe(
+      (response) => {
+        this.rentalAdd();
       },
       (error) => {
+        console.log(error)
         this.toastrService.warning(
           'İşlem gerçekleştirilemedi. Kart bilgilerinizi kontrol ediniz.',
           'Kredi Kartı Hatası'
         );
+        this.paymentSuccess = false;
       }
     );
   }
@@ -101,17 +179,19 @@ export class PaymentCreditcardComponent implements OnInit {
     }
     this.paymentAmount = this.car.dailyPrice * this.rentDay;
   }
+
   paymentButton() {
-    this.creditCard = {
-      nameOnCard: this.nameOnCard,
-      cardNumber: this.cardNumber,
-      expirationDateMonth: this.expirationDateMonth,
-      expirationDateYear: this.expirationDateYear,
-      securityCode: this.securityCode,
-      paymentAmount: this.paymentAmount,
+    let today=new Date();
+    let creditCardModel = Object.assign({}, this.paymentForm.value);
+    this.payByCreditCardDto = {
+      customerId: this.rental.customerId,
+      creditCard: creditCardModel,
+      paymentDate:today ,
+      paymentAmount: this.paymentAmount
     };
+
     if (this.dateControl()) {
-      this.payByCreditCard(this.creditCard);
+      this.payByCreditCard(this.payByCreditCardDto);
     }
   }
 
@@ -123,13 +203,8 @@ export class PaymentCreditcardComponent implements OnInit {
     this.router.navigate(['/rentals/rental-add/' + this.rental.carId]);
   }
 
-  getMinYear() {
-    var year = new Date().getFullYear();
-    return year;
-  }
-
   dateControl() {
-    var year = new Date().getFullYear();
+    var year = this.getMinYear();
     var month = new Date().getMonth() + 1;
     if (
       (this.expirationDateYear <= year && this.expirationDateMonth < month) ||
@@ -142,23 +217,27 @@ export class PaymentCreditcardComponent implements OnInit {
   }
 
 
-  add() {
-    this.rentalService.add(this.rentalService.tempRental).subscribe(response => {      
+  rentalAdd() {
+    this.rentalService.add(this.rentalService.tempRental).subscribe(response => {
       this.toastrService.success(
         'Kiralama işlemi gerçekleştirildi.',
         'Ödeme İşlemi Gerçekleştirildi.'
       );
       this.paymentSuccess = true;
     }, responseError => {
-      if (responseError.error.Errors.length > 0) {
+      if (
+        responseError.error.Errors &&
+        responseError.error.Errors.length > 0
+      ) {
         for (let i = 0; i < responseError.error.Errors.length; i++) {
           this.toastrService.error(responseError.error.Errors[i].ErrorMessage
             , "Doğrulama hatası")
         }
       }
       else {
-        this.toastrService.error(responseError.ErrorMessage
-          , "Hata Oluştu")
+        this.toastrService.error(responseError.error
+          , "Hata Oluştu. Tekrar deneyin.");
+          window.history.back();
       }
     });
   }
