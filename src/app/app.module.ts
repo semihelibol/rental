@@ -34,6 +34,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { RegisterComponent } from './components/register/register.component';
 import { UserUpdateComponent } from './components/user-update/user-update.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { TextDirective } from './directives/text.directive';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,7 +64,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     LoginComponent,
     RegisterComponent,
     UserUpdateComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    TextDirective
   ],
   imports: [
     BrowserModule,

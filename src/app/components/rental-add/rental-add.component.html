@@ -49,7 +49,7 @@
           <div class="mb-3">
             <label for="customerId">Müşteri Seçin:</label>
             <div class="form-group">
-              <select
+              <select appText
                 type="select"
                 [(ngModel)]="customerId"
                 id="customerId"
@@ -57,7 +57,7 @@
                 class="form-control"
                 (change)="customerChange()"
               >
-                <option
+                <option 
                   [ngValue]="customer.id"
                   *ngFor="let customer of customers"
                 >
@@ -88,7 +88,7 @@
           <div class="mb-3">
             <label for="rentDate"> Kiralama Tarihi:</label>
             <div class="form-group">
-              <input
+              <input appText
                 class="form-control"
                 formControlName="rentDate"
                 id="rentDate"
@@ -102,7 +102,7 @@
           <div class="mb-3">
             <label for="returnDate"> Teslim Tarihi:</label>
             <div class="form-group">
-              <input
+              <input appText
                 class="form-control"
                 formControlName="returnDate"
                 id="returnDate"

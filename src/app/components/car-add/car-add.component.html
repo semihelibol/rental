@@ -13,14 +13,14 @@
             <div class="mb-3">
                 <label for="description"> Araba Adı:</label>
                 <div class="form-group">
-                    <input class="form-control" formControlName="description" id="description" type="text" />
+                    <input appText class="form-control" formControlName="description" id="description" type="text" />
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="brandId">Marka Seçin:</label>
                 <div class="form-group">
-                    <select type="select" id="brandId" formControlName="brandId"
+                    <select appText type="select" id="brandId" formControlName="brandId"
                         class="form-control">
                         <option [ngValue]="brand.id" *ngFor="let brand of brands" >
                             {{ brand.name }}
@@ -31,7 +31,7 @@
             <div class="mb-3">
                 <label for="colorId">Renk Seçin:</label>
                 <div class="form-group">
-                    <select type="select"  id="colorId" formControlName="colorId" 
+                    <select appText type="select"  id="colorId" formControlName="colorId" 
                         class="form-control">
                         <option  [ngValue]="color.id" *ngFor="let color of colors">
                             {{ color.name }}
@@ -42,24 +42,22 @@
             <div class="mb-3">
                 <label for="modelYear"> Model Yılı:</label>
                 <div class="form-group">
-                    <input class="form-control" min=1962 formControlName="modelYear" id="modelYear" type="number" />
+                    <input appText class="form-control" min=1962 formControlName="modelYear" id="modelYear" type="number" />
                 </div>
             </div>
             <div class="mb-3">
                 <label for="minFindeksScore"> Minumum Findeks Puanı:</label>
                 <div class="form-group">
-                    <input class="form-control" min=0 max=1900 formControlName="minFindeksScore" id="minFindeksScore" type="number" />
+                    <input appText class="form-control" min=0 max=1900 formControlName="minFindeksScore" id="minFindeksScore" type="number" />
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="dailyPrice"> Günlük Kira Ücreti:</label>
                 <div class="form-group">
-                    <input class="form-control" min=1 formControlName="dailyPrice" id="dailyPrice" type="number" />
+                    <input appText class="form-control" min=1 formControlName="dailyPrice" id="dailyPrice" type="number" />
                 </div>
             </div>
-
-
         </form>
     </div>
 

@@ -33,7 +33,7 @@
               Öde</a></div>
         </div>
         <div class="form-group">
-          <select type="select" [(ngModel)]="creditCardId" id="creditCardId" class="form-control"
+          <select appText type="select" [(ngModel)]="creditCardId" id="creditCardId" class="form-control"
             (change)="creditCardChange()">
             <option [ngValue]="creditCard.id" *ngFor="let creditCard of creditCards">
               {{ creditCard.creditCardName }}
@@ -47,14 +47,14 @@
       <div class="mb-3">
         <label for="nameOnCard">Kartın üzerindeki isim ve soyisim</label>
         <div class="form-group">
-          <input type="text" class="form-control" id="nameOnCard" formControlName="nameOnCard"
+          <input appText type="text" class="form-control" id="nameOnCard" formControlName="nameOnCard"
             placeholder="Semih Elibol" [(ngModel)]="nameOnCard" />
         </div>
       </div>
       <div class="mb-3">
         <label for="cardNumber">Card number</label>
         <div class="form-group">
-          <input type="text" class="form-control" id="cardNumber" formControlName="cardNumber"
+          <input appText type="text" class="form-control" id="cardNumber" formControlName="cardNumber"
             placeholder="0000-0000-0000-0000" [(ngModel)]="cardNumber" />
         </div>
       </div>
@@ -65,7 +65,7 @@
             <div class="col-md-5">
               <div class="mb-3">
                 <div class="form-group">
-                  <input type="number" class="form-control" formControlName="expirationDateMonth" placeholder="Ay"
+                  <input appText type="number" class="form-control" formControlName="expirationDateMonth" placeholder="Ay"
                     max="12" min="1" [(ngModel)]="expirationDateMonth" (input)="dateControl()" />
                 </div>
               </div>
@@ -76,7 +76,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <div class="form-group">
-                  <input type="number" class="form-control" formControlName="expirationDateYear" placeholder="Yıl"
+                  <input appText type="number" class="form-control" formControlName="expirationDateYear" placeholder="Yıl"
                     max="2100" min="{{ getMinYear() }}" [(ngModel)]="expirationDateYear" (input)="dateControl()" />
                 </div>
               </div>
@@ -88,7 +88,7 @@
           <div class="mb-3">
             <div class="form-group">
               <label for="securityCode">Güvenlik Kodu</label>
-              <input id="securityCode" type="text" maxlength="3" minlength="3" class="form-control"
+              <input appText id="securityCode" type="text" maxlength="3" minlength="3" class="form-control"
                 formControlName="securityCode" placeholder="000" [(ngModel)]="securityCode" />
             </div>
           </div>
